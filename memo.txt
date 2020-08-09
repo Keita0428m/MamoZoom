@@ -1,0 +1,6 @@
+■Error 1 
+kernel_require.rb:92:in `require': cannot load such file -- dotenv/load (LoadError)
+→https://stackoverflow.com/questions/47470103/loaderror-for-dotenv-load-while-dotenv-load-works/47690608
+$ gem install dotenv
+で解決
+
