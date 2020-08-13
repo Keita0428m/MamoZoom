@@ -6,27 +6,6 @@ class Zoom
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
 
-      payload = {
-        topic: "デイリー",
-        type: "1",
-        duration: "40",
-        timezone: "Asia/Tokyo",
-        password: "",
-        agenda: "進捗報告"
-      }.to_json
-
-      payload_for_jwt = {
-        iss: ENV['API_KEY'],
-        exp: Time.now.to_i + 36000
-      }
-
-      jwt = JWT.encode(payload_for_jwt, ENV['API_SECRET'], 'HS256')
-
-      headers = {
-        "Content-Type" => "application/json",
-        "Authorization" => "Bearer #{jwt}"
-      }
-
       req = Net::HTTP::Post.new(uri.path)
       req.body = payload
 
@@ -34,6 +13,34 @@ class Zoom
 
       res = http.request(req)
       join_url = JSON.parse(res.body)['join_url']
+    end
+
+    private
+    def payload
+      {
+        topic: "デイリー",
+        type: '1',
+        duration: '40',
+        timezone: "Asia/Tokyo",
+        password: "",
+        agenda: "進捗報告",
+      }.to_json
+    end
+
+    def headers
+      {
+        "Content-Type" => "application/json",
+        "Authorization" => "Bearer #{generate_jwt}"
+      }
+    end
+
+
+    def generate_jwt
+      payload = {
+        iss: ENV['API_KEY'],
+        exp: Time.now.to_i + 36000
+      }
+      JWT.encode(payload, ENV['API_SECRET'], 'HS256')
     end
   end
 end
